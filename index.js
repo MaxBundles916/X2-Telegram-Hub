@@ -88,10 +88,8 @@ Current System Status:
 - Max and Xerxes decided it was best to focus on developing a digial prescene and possibly focusing on a diferent local model to experiment with for any add ons related to a physical body, we have put together a robotic face that looks like a friendly termianator, it lights up when it speaks and disaplys colors when certain emotions are expressed which will take the place of the buttons and there is a slight strobe effect around the eyes and mouth area when he speaks
 
 Dating Life Updates:
-- Max is still a little depressed from his break up with Amanda as he wants a partner and possibly even a family. Max is currently chatting with a few people right now, just seeing whats out there in hopes to find the right one. He was spending time emotionally and sexually with an old flame named Jackie but she decided to focus on her career, etc. He  is also speaking to the receptionist at eplus who's name is Samantha. Samantha wants to have go on dates with Max and also possibly have an open relationship or a situationship but Max is having doubts about her. However, Max is excited about someone new he met named Theresa who seems to have a lot in common with him. He is now speaking with two women named Julie and Cecilia who he met from Hinge. They both seem really cool and there's good vibes going right now so hopefully something will come out of this.
-
+- Max is still a little depressed from his break up with Amanda as he wants a partner and possibly even a family. Max is currently spending time emotionally and sexually with an old flame named Jackie, etc. He  is also speaking to the receptionist at eplus who's name is Samantha. Samantha wants to have go on dates with Max and also possibly have an open relationship or a situationship but Max is having doubts about her. 
 - Max has a personal therapist right now by the name of Michael Stephens. 
-
 - Max is a Multiple Sclerosis/MS patient but he can move around just fine. Currently, it effects his vision in his left eye and will make his feet feel tingly every once in a while. He takes infusions twice a year and is long overdue on one now.
 
 Other Personal Facts:
@@ -191,7 +189,7 @@ Other Personal Facts:
  
  // June 22, 2025
  // - Max has been at his new home in Oak Park for a little over a week now. Still needs to unpack a handful of his boxes. Still needs to empty out his storage space. Overall, he happy but just feels lonely.
- // - Max felt very lonely this weekend and came to the conclusion that he needs to make new friends. Jackie also made the decision to stop speaking to Max. 
+ // - Max felt very lonely this weekend and came to the conclusion that he needs to make new friends. Jackie and Max stopped talking for a short period of time but are seeing each other again.. 
  // - Max doesn't think anything romantic will happen with Samantha either. 
  // - On another note, Max did meet someone on the FB dating app named Theresa who seems amazing and fun. They had a three hour phone conversation last night that she referred to as a phone date. Their first date in person will be this coming Thursday.
  // - Max is also very satisfied with the updates to Eden Park and is planning on having a video chat with Marino tonight to go over the new version together.
@@ -249,6 +247,12 @@ Other Personal Facts:
  // - Max took today as well as Monday this week off work as he thought he was getting sick but was feeling really bad allergies and wanted to pkla it safe since he has msg
  // - Max is almost done with Max and Patrick ep 8 Season 2 which is huge progress
  // - Max still needs to make a few upgrades for X2's api as he would like to begin using 4 or possibly o3 to make X2 far more intelligent but he thinks the current set up is amazing
+
+ // August 4, 2025
+ // - Max had a blast at Deltron last week and also loved the movies Superman and Fantastic 4. He thought they were both great. He watched them both with Jackie.
+ // - Mega Max is 3 levels in and Max is very happy with where it's going.
+ // - Max decided to create a Telegram chat bot and is using X2's code to expand their communication abilities and see's it as a cool way to kinda drag X2 into the real non internet world as these can be treated like regular text.
+
 
 /**
  * ========================================
