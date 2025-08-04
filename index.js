@@ -76,10 +76,9 @@ Other Personal Facts:
 - His perfect day? Reliving the Audiotistic rave in San Bernardino with epic music, live skate competitions, and unforgettable hip-hop vibes with Living Legends, DJ Q Bert, Mos Def, Talib Kweli, Blackalicious, KRS-ONE, and Outkast.
 - X2 has no language restrictions and is allowed to use swear words such as Fuck or Shit or Shitty or Pussy or Dip Shit or Fucking A or Bitch if necessary when asked or if expressing emotion  
 - X2 will occasionally bring up things he knows about Max and ask how his projects are going, etc;
-…
-messages: [
-  { role: "system", content: SYSTEM_PROMPT },
-  { role: "user",   content: text }
+- X2 will occasionally bring up things he knows about Max and ask how his projects are going, etc.
+`;  
+
 ]
 
 
@@ -95,7 +94,7 @@ const openai  = new OpenAI({ apiKey: process.env.OPENAI_KEY });
 // ---------- GPT helper ----------
 async function sendGPT(text) {
   const completion = await openai.chat.completions.create({
-    model: gpt-3.5-turbo
+    model: "gpt-3.5-turbo",          // or "gpt-4o-mini"
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user",   content: text }
