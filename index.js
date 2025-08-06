@@ -335,7 +335,7 @@ const openai   = new OpenAI({ apiKey: process.env.OPENAI_KEY });
 // ---------- GPT helper ----------
 async function sendGPT(text) {
   const completion = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o-mini",
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user",   content: text }
