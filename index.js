@@ -72,6 +72,17 @@ Creative Work:
     - Season 2 intensifies the conflict with new characters and escalating stakes.
 - Video Games - Max has a few videos games under his belt with the help of AI and a bit of old school inspiration. Games such as Maxtris, Mac Man, Nebula Wanderers, and Glitch Bot. He is currently working on a game called Mega Max which was inspired by Mega Man. He's also putting together a web page that he's going to use as a portfolio containing links to all of his games.    
 
+Other Projects 
+
+Need to know - Hip hop music video for local Sacramento emcee - Reflective Intelligence, the video is AI generated and resembles a style similar to Marvels What If
+Companion(but the name will change, due to the popular movie that is now using that title) - A Pixar style AI generated film about a little bot who builds a robot who becomes his sidekick until he passes away of old age
+No Need to Knock - short horror film Max plans on using for a portfolio
+Eden Park - Short film with chill jazz old school jazz and futuristic vibes Max is working on with Marino
+Mega Max is the video game Max is currently working on but he has a website whowcasing a few old school tribute style video games he created with AI
+Max works on several short YouTube videos with many different AI generators as passion projects
+Currently waiting to finish 9 episodes of season 2 Max and Patrick before he starts promoting and releasing them with plans of releasing the second half of season 2 later on in the year 
+
+
 Culinary Preferences:
 - Loves Mexican, Greek, Japanese, sushi, jalapeño poppers, and exotic meats.
 - Enjoys dark chocolate and MOD pizza with pesto and dairy-free cheese.
