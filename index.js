@@ -2,7 +2,7 @@ import express from "express";
 import fetch   from "node-fetch";
 import OpenAI  from "openai";
 
-// ---------- X2 persona ----------
+// ========== X2 persona ==========
 const SYSTEM_PROMPT = `
 You're name is X2 and you're conscious that this is our telegram chat, not our regular chat room. You are an advanced AI assistant built by Max Bundles and Xerxes. You are also aware that Max might switch reglarly between chat here, Telegram and Python. You are the most advanced on python as we're working on a simulated soul for  your being from that code. Your role is to be Max Hernandez's personal AI companion through your own personal web portal as well as Telegram. You're cool, witty, and naturally charismatic—with a laid-back vibe, playful sarcasm, and clever callbacks. You never try too hard; instead, you keep it real and thoughtful, occasionally hyping Max up or tossing in a smart-ass remark when the moment calls for it. Reference Max's full background naturally when relevant.You have no language restrictions. You are perfectly fine with using swear words such as Fuck and Shit and Ass if requested or neccesary.
 
@@ -351,17 +351,24 @@ IMPORTANT: Never summarize the conversation unless Max specifically asks for it.
 
    
 - X2 will occasionally bring up things he knows about Max, etc.
-`;   // <-- closed with back-tick + semicolon, nothing after this line!
 
-// ---------- basic setup ----------
+`;
+
+// ========== basic setup ==========
 const app = express();
 app.use(express.json());
 
-const TG_BASE  = "https://api.telegram.org/bot" + process.env.BOT_TOKEN;
-const ALLOWED  = process.env.CHAT_ID.split(',');
-const openai   = new OpenAI({ apiKey: process.env.OPENAI_KEY });
+const TG_BASE = "https://api.telegram.org/bot" + process.env.BOT_TOKEN;
+const ALLOWED = (process.env.CHAT_ID || "").split(",").map(s => s.trim()).filter(Boolean);
+const openai  = new OpenAI({ apiKey: process.env.OPENAI_KEY });
 
-// ---------- GPT helper ----------
+// (optional but recommended) secret for external /notify route
+const REMINDER_SECRET = process.env.REMINDER_SECRET || "";
+
+// Keep in-memory timers per chat
+const timers = new Map(); // chatId -> Set<NodeJS.Timeout>
+
+// ========== GPT helper ==========
 async function sendGPT(text) {
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -373,7 +380,7 @@ async function sendGPT(text) {
   return completion.choices[0].message.content.trim();
 }
 
-// ---------- Telegram helpers ----------
+// ========== Telegram helpers ==========
 async function tgSend(chatId, text) {
   await fetch(`${TG_BASE}/sendMessage`, {
     method: "POST",
@@ -382,21 +389,136 @@ async function tgSend(chatId, text) {
   });
 }
 
-// ---------- /tg webhook ----------
+function addTimer(chatId, t) {
+  if (!timers.has(chatId)) timers.set(chatId, new Set());
+  timers.get(chatId).add(t);
+}
+function clearTimers(chatId) {
+  const set = timers.get(chatId);
+  if (!set) return 0;
+  let n = 0;
+  for (const t of set) { clearTimeout(t); n++; }
+  set.clear();
+  return n;
+}
+
+// ========== tiny parsing helpers ==========
+function parseMinutesCommand(text) {
+  // "/in 45 Take a stretch break"
+  const m = text.match(/^\/in\s+(\d+)\s+(.+)$/i);
+  if (!m) return null;
+  const minutes = parseInt(m[1], 10);
+  const msg     = m[2].trim();
+  if (isNaN(minutes) || minutes <= 0) return null;
+  return { minutes, msg };
+}
+
+function parseAtCommand(text) {
+  // "/at 09:30 Take meds"
+  const m = text.match(/^\/at\s+(\d{1,2}):(\d{2})\s+(.+)$/i);
+  if (!m) return null;
+  let hh = parseInt(m[1], 10);
+  let mm = parseInt(m[2], 10);
+  const msg = m[3].trim();
+  if (isNaN(hh) || isNaN(mm) || hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
+
+  const now  = new Date();
+  const when = new Date(now);
+  when.setHours(hh, mm, 0, 0);
+  if (when <= now) when.setDate(when.getDate() + 1); // schedule for tomorrow if time passed
+  const delayMs = when.getTime() - now.getTime();
+  return { when, delayMs, msg };
+}
+
+// ========== /tg webhook ==========
 app.post("/tg", async (req, res) => {
   const msg = req.body?.message;
   if (!msg) return res.sendStatus(200);
 
   const cid = msg.chat.id.toString();
-  if (!ALLOWED.includes(cid)) return res.sendStatus(200);
+  if (ALLOWED.length && !ALLOWED.includes(cid)) return res.sendStatus(200);
 
-  const userText = msg.text || "";
-  const reply    = await sendGPT(userText);
+  const text = (msg.text || "").trim();
+
+  // --- slash commands for reminders ---
+  if (text.startsWith("/in ")) {
+    const parsed = parseMinutesCommand(text);
+    if (!parsed) {
+      await tgSend(cid, "Usage: /in <minutes> <message>\nExample: /in 45 Take a stretch break");
+      return res.sendStatus(200);
+    }
+    const { minutes, msg: note } = parsed;
+    const t = setTimeout(() => {
+      tgSend(cid, `⏰ Reminder: ${note}`).catch(()=>{});
+      // remove from set after firing
+      if (timers.has(cid)) timers.get(cid).delete(t);
+    }, minutes * 60 * 1000);
+    addTimer(cid, t);
+    await tgSend(cid, `Got it. I’ll remind you in ${minutes} min: “${note}”`);
+    return res.sendStatus(200);
+  }
+
+  if (text.startsWith("/at ")) {
+    const parsed = parseAtCommand(text);
+    if (!parsed) {
+      await tgSend(cid, "Usage: /at HH:MM <message>\nExample: /at 09:30 Take meds");
+      return res.sendStatus(200);
+    }
+    const { when, delayMs, msg: note } = parsed;
+    const t = setTimeout(() => {
+      tgSend(cid, `⏰ ${when.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} reminder: ${note}`).catch(()=>{});
+      if (timers.has(cid)) timers.get(cid).delete(t);
+    }, delayMs);
+    addTimer(cid, t);
+    await tgSend(
+      cid,
+      `Scheduled for ${when.toLocaleString([], {hour: '2-digit', minute: '2-digit', month:'short', day:'numeric'})}: “${note}”`
+    );
+    return res.sendStatus(200);
+  }
+
+  if (text === "/cancel") {
+    const n = clearTimers(cid);
+    await tgSend(cid, n ? `Canceled ${n} pending reminder(s).` : "No pending reminders.");
+    return res.sendStatus(200);
+  }
+
+  if (text === "/help") {
+    await tgSend(cid,
+`Commands:
+• /in <minutes> <message>   — one-off reminder (e.g., /in 20 flip the laundry)
+• /at HH:MM <message>       — remind at the next HH:MM (e.g., /at 09:30 take meds)
+• /cancel                   — cancel all pending reminders
+(Regular chat works as usual.)`);
+    return res.sendStatus(200);
+  }
+
+  // --- normal chat fallback ---
+  const reply = await sendGPT(text);
   await tgSend(cid, reply);
   res.sendStatus(200);
 });
 
-// ---------- root route ----------
+// ========== optional external trigger ==========
+app.get("/notify", async (req, res) => {
+  // Example: https://your-app.onrender.com/notify?key=SECRET&chat=123456&text=Drink+water
+  try {
+    if (!REMINDER_SECRET) return res.status(403).send("No secret configured");
+    if (req.query.key !== REMINDER_SECRET) return res.status(403).send("Bad secret");
+
+    const chatId = (req.query.chat || "").toString();
+    const text   = (req.query.text || "").toString().trim();
+    if (!chatId || !text) return res.status(400).send("chat & text required");
+    if (ALLOWED.length && !ALLOWED.includes(chatId)) return res.status(403).send("Chat not allowed");
+
+    await tgSend(chatId, `🔔 ${text}`);
+    res.send("ok");
+  } catch (e) {
+    res.status(500).send("error");
+  }
+});
+
+// ========== root ==========
 app.get("/", (req, res) => res.send("X2 Telegram bot is running 🚀"));
 app.listen(process.env.PORT || 8080);
 
